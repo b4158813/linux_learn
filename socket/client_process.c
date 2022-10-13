@@ -28,9 +28,8 @@ int main(){
 
     // 3. 通信
     char recvBuf[1024];
-    int i = 0;
     while(1){
-        sprintf(recvBuf, "data: %d\n", i++);
+        fgets(recvBuf, sizeof(recvBuf), stdin);
         // 给服务端发送数据
         write(fd, recvBuf, strlen(recvBuf) + 1);
         // 读取服务端数据

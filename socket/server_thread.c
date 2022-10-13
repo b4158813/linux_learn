@@ -7,6 +7,7 @@
 #include <wait.h>
 #include <errno.h>
 #include <pthread.h>
+#include <ctype.h>
 
 struct sockInfo{
     int fd; // 通信的文件描述符
@@ -28,7 +29,7 @@ void * working(void *arg){
     // 接收客户端发来的数据
     char recvBuf[1024];
     while(1){
-        int len = read(pinfo->fd, recvBuf, sizeof(recvBuf));
+        int len = recv(pinfo->fd, recvBuf, sizeof(recvBuf), 0);
         if(len == -1){
             perror("read");
             exit(-1);
@@ -36,10 +37,20 @@ void * working(void *arg){
             printf("recv client: %s\n", recvBuf);
         }else if(len == 0){
             printf("client closed...\n");
+            close(pinfo->fd);
             break;
         }
+        
+        // 转成大写并发送回去
+        for(int i=0;i<len;++i){
+            recvBuf[i] = toupper(recvBuf[i]);
+        }
 
-        write(pinfo->fd, recvBuf, strlen(recvBuf) + 1);
+        int ret = send(pinfo->fd, recvBuf, strlen(recvBuf) + 1, 0);
+        if(ret == -1){
+            perror("send");
+            exit(-1);
+        }
     }
     return NULL;
 }
@@ -52,6 +63,10 @@ int main(){
         perror("socket");
         return -1;
     }
+
+    // 设置端口复用
+    int optval = 1;
+    setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
     
     // 绑定
     struct sockaddr_in saddr;
