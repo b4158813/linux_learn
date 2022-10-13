@@ -74,7 +74,7 @@ int main(){
     // 初始化数据
     int max = sizeof(sockinfos) / sizeof(sockinfos[0]);
     for(int i=0;i<max;++i){
-        bzero(&sockinfos[i], sizeof(sockinfos[i]));
+        memset(&sockinfos[i], 0, sizeof(sockinfos[i]));
         sockinfos[i].fd = -1;
         sockinfos[i].tid = -1;
     }
