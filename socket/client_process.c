@@ -44,7 +44,6 @@ int main(){
             printf("server closed...\n");
             break;
         }
-        sleep(1);
     }
 
     // 关闭连接

@@ -28,12 +28,11 @@ int main(){
 
     // 3. 通信
     char recvBuf[1024] = {0};
+    int i = 0;
     while(1){
 
-        char *data = "hello, i am client.\n";
-
-        sleep(1);
-        
+        char data[128];
+        sprintf(data, "hello, %d\n", i++);        
         // 给服务端发送数据
         write(fd, data, strlen(data));
         // 读取服务端数据
@@ -49,6 +48,7 @@ int main(){
             break;
         }
 
+        usleep(1000);
     }
 
     // 关闭连接
